@@ -4,7 +4,7 @@ from sklearn.svm import SVR
 import matplotlib.pyplot as plt
 
 
-plt.switch_backend('newbackend')  
+plt.switch_backend('GTKAgg')
 
 
 
@@ -15,9 +15,10 @@ def get_data(filename):
 	with open(filename, 'r') as csvfile:
 		csvFileReader = csv.reader(csvfile)
 		next(csvFileReader)	# skipping column names
+		next(csvFileReader)	# skipping gap row left with nasdaq data
 		for row in csvFileReader:
-			dates.append(int(row[0].split('-')[0]))
-			prices.append(float(row[1]))
+			dates.append(int(row[0].split('/')[0]))
+			prices.append(float(row[3]))
 	return
 
 def predict_price(dates, prices, x):
@@ -30,7 +31,7 @@ def predict_price(dates, prices, x):
 	svr_lin.fit(dates, prices)
 	svr_poly.fit(dates, prices)
 
-	plt.scatter(dates, prices, color= 'black', label= 'Data') # plotting the initial datapoints 
+	plt.scatter(dates, prices, color= 'black', label= 'Data') # plotting the initial datapoints
 	plt.plot(dates, svr_rbf.predict(dates), color= 'red', label= 'RBF model') # plotting the line made by the RBF kernel
 	plt.plot(dates,svr_lin.predict(dates), color= 'green', label= 'Linear model') # plotting the line made by linear kernel
 	plt.plot(dates,svr_poly.predict(dates), color= 'blue', label= 'Polynomial model') # plotting the line made by polynomial kernel
@@ -42,8 +43,9 @@ def predict_price(dates, prices, x):
 
 	return svr_rbf.predict(x)[0], svr_lin.predict(x)[0], svr_poly.predict(x)[0]
 
-get_data('aapl.csv') # calling get_data method by passing the csv file to it
+get_data('aapl2.csv') # calling get_data method by passing the csv file to it
 #print "Dates- ", dates
 #print "Prices- ", prices
 
-predicted_price = predict_price(dates, prices, 29)  
+predicted_price = predict_price(dates, prices, 29)
+plt.show()
